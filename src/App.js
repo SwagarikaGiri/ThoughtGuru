@@ -6,7 +6,7 @@ import './App.css';
 import author1 from './assets/img/1.jpeg'
 import author2 from './assets/img/2.jpeg'
 import author3 from './assets/img/3.jpeg'
-import author4 from './assets/img/4.jpeg'
+// import author4 from './assets/img/4.jpeg'
 import LoadingPage from './components/LoadingPage'
 import ResultTable from './components/ResultTable'
 
@@ -14,67 +14,33 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      ontology:'',
-      accession:'',
+      topic:'',
       loading:false,
+      submitError:'',
       data:{}
 
 
     };
-    this.onChangeValue=this.onChangeValue.bind(this)
-    this.onInputChange=this.onInputChange.bind(this)
+    // this.onChangeValue=this.onChangeValue.bind(this)
+    // this.onInputChange=this.onInputChange.bind(this)
+    this.onChangeHandler= this.onChangeHandler.bind(this)
   }
-  onChangeValue(event) {
-    this.setState({ontology: event.target.value});
+  onChangeHandler(event) {
+    this.setState({submitError:''})
+    this.setState({topic:event.target.value});
     
   }
 
+ submitHandler=(event)=>{
+   event.preventDefault();
+   let topic = this.state.topic
+   if(!topic){
+     this.setState({submitError:'Please enter a topic'})
+   }
 
-  onInputChange(event){
+ }
 
-    this.setState({accession: event.target.value});
-  }
-  showDelayMessage=()=>{
-    return(
-    <div>
-     Please wait for atleast two minutes to get the results
-    </div>
-    )
-
-  }
-  showResultTable=()=>{
-    return(
-      <div>
-       result is here
-      </div>
-      )
-
-  }
-
-  onHandleSubmit=(event)=>{
-    event.preventDefault();
-    let accession = this.state.accession
-    let ontology = this. state.ontology
-    let path = 'http://0.0.0.0:5000/accession?accession_no='+accession+'&ontology='+ontology
-    // console.log("***************"+path+"***************")
-    this.setState({ loading: true },()=>{
-      axios.get(path).then( 
-        (response) => { 
-          this.setState({
-            loading:false,
-            data:response.data.data
-          })
-          
-        }, 
-        (error) => { 
-            console.log(error); 
-        }); 
-      
-
-    });
-   
-   
-  }
+ 
   render()
   {
     let loading = this.state.loading
@@ -84,7 +50,7 @@ class App extends React.Component {
       <div className="App">
         <nav className="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav">
       <div className="container">
-        <a className="navbar-brand js-scroll-trigger" href="#page-top">Multi-PredGO</a>
+        <a className="navbar-brand js-scroll-trigger" href="#page-top">TweetGuru</a>
         <button className="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
           Menu
           <i className="fa fa-bars"></i>
@@ -92,7 +58,7 @@ class App extends React.Component {
         <div className="collapse navbar-collapse" id="navbarResponsive">
           <ul className="navbar-nav text-uppercase ml-auto">
             <li className="nav-item">
-              <a className="nav-link js-scroll-trigger" href="#results">Get Results</a>
+              <a className="nav-link js-scroll-trigger" href="#results">Get Thought Leaders</a>
             </li>
              <li className="nav-item">
               <a className="nav-link js-scroll-trigger" href="#team">Team</a>
@@ -107,9 +73,7 @@ class App extends React.Component {
     <header className="masthead">
       <div className="container">
         <div className="intro-text">
-          <div className="intro-lead-in">Multi-PredGO is a multi-modal protein function prediction model that uses the protein sequence, protein structure, and protein-protein interaction network-based information to predict GO-based protein function. 
-          As the protein function classes are dependent on each other, we have used a neuro-symbolic hierarchical classification model,
-           which resembles the structure of Gene Ontology (GO), for effectively predicting the dependent protein functions.</div>
+          <div className="intro-lead-in">TweetGuru : Recommendation system that suggest us influencer or thought leader in various field of ML/AI</div>
           {/* <div className="intro-heading text-uppercase"></div> */}
           <a className="btn btn-primary btn-xl text-uppercase js-scroll-trigger" href="#services">Tell Me More</a>
         </div>
@@ -122,11 +86,27 @@ class App extends React.Component {
       <div className="container">
         <div className="row">
           <div className="col-lg-12 text-center">
-            <h2 className="section-heading text-uppercase">Get Results</h2>
-            <h3 className="section-subheading text-muted">This tool only needs protein sequence as an input. The source code of the model is available on <a href="https://github.com/SwagarikaGiri/Multi-PredGO"><h6>Github Link</h6></a> Example Accession Number : P53368, P27348</h3>
+            <h2 className="section-heading text-uppercase">Get Thought Leaders </h2>
+            <h3 className="section-subheading text-muted">Lorem ipsum dolor sit amet consectetur.</h3>
            
-            <h6>Please enter the accession number and select the ontology</h6>
-            <form onSubmit = {this.onHandleSubmit}>
+            <h6>Please enter the topic</h6>
+            <form id="contactForm" name="sentMessage" noValidate="novalidate" onSubmit={this.submitHandler}>
+            {/* <div className="row"> */}
+              <div >
+                <div className="form-group">
+                  <input className="form-control" id="name" type="text" placeholder="Enter Topic" onChange={this.onChangeHandler} value={this.state.topic}/>
+                  <p className="help-block text-danger">{this.state.submitError}</p>
+                </div>
+              </div>
+      
+              <div className="clearfix"></div>
+              <div className="col-lg-12 text-center">
+                <div id="success"></div>
+                <button id="sendMessageButton" className="btn btn-primary btn-primary text-uppercase" type="submit">Get Results</button>
+              </div>
+            {/* </div> */}
+            </form>
+            {/* <form onSubmit = {this.onHandleSubmit}>
       <input type="text" name="name" value={this.state.accession} onChange={this.onInputChange}/>
       <div onChange={this.onChangeValue}>
         <input type="radio" value="bp" name="ontology" /> BP
@@ -136,7 +116,7 @@ class App extends React.Component {
     
     <input type="submit" value="Submit" />
   </form>
-  {loading ? <LoadingPage/>: <ResultTable results={data}/>}
+  {loading ? <LoadingPage/>: <ResultTable results={data}/>} */}
   </div>
           
         </div>
@@ -154,11 +134,12 @@ class App extends React.Component {
           </div>
         </div>
         <div className="row">
-          <div className="col-sm-3">
+          <div className="col-sm-4">
             <div className="team-member">
               <img className="mx-auto rounded-circle" src={author1} alt=""/>
               <h4>Swagarika J Giri</h4>
-              <p className="text-muted">Researcher (M. Tech IIT Patna)</p>
+              <p className="text-muted">ASDE-II</p>
+              <p className="text-muted">Publicis Sapient</p>
               <ul className="list-inline social-buttons">
                 <li className="list-inline-item">
                   <a href="https://twitter.com/swagarika95">
@@ -178,35 +159,37 @@ class App extends React.Component {
               </ul>
             </div>
           </div>
-          <div className="col-sm-3">
+          <div className="col-sm-4">
             <div className="team-member">
               <img className="mx-auto rounded-circle" src={author2} alt=""/>
-              <h4>Pratik Dutta</h4>
-              <p className="text-muted">Researcher (Ph. D IIT Patna) </p>
+              <h4>Pralay Ramteke</h4>
+              <p className="text-muted"> Data Scientist</p>
+              <p className="text-muted"> Wunderman Thompson Commerce </p>
               <ul className="list-inline social-buttons">
                 <li className="list-inline-item">
-                  <a href="https://twitter.com/dutta_prat?lang=en">
+                  <a href="https://twitter.com/pralayramteke">
                     <i className="fa fa-twitter"></i>
                   </a>
                 </li>
                 <li className="list-inline-item">
-                  <a href="http://www.iitp.ac.in/~pratik.pcs16/">
+                  <a href="https://github.com/puevigreven">
                     <i className="fa fa-github"></i>
                   </a>
                 </li>
                 <li className="list-inline-item">
-                  <a href="https://www.linkedin.com/in/bioinformfaticspratik/">
+                  <a href="https://www.linkedin.com/in/pralay-ramteke/?originalSubdomain=in">
                     <i className="fa fa-linkedin"></i>
                   </a>
                 </li>
               </ul>
             </div>
           </div>
-          <div className="col-sm-3">
+          <div className="col-sm-4">
             <div className="team-member">
-              <img className="mx-auto rounded-circle" src={author4} alt=""/>
-              <h4>Parth Halani </h4>
-              <p className="text-muted">Researcher (B. Tech IIIT Guwahati) </p>
+              <img className="mx-auto rounded-circle" src={author3} alt=""/>
+              <h4>Pramod Pai </h4>
+              <p className="text-muted">Masters</p>
+              <p className="text-muted">Northeastern University</p>
               <ul className="list-inline social-buttons">
                 <li className="list-inline-item">
                   <a href="#something">
@@ -226,9 +209,9 @@ class App extends React.Component {
               </ul>
             </div>
           </div>
-          <div className="col-sm-3">
+          {/* <div className="col-sm-3">
             <div className="team-member">
-              <img className="mx-auto rounded-circle" src={author3} alt=""/>
+              <img className="mx-auto rounded-circle" src={author1} alt=""/>
               <h4>Sriparna Saha</h4>
               <p className="text-muted">Assoc. Prof IIT Patna</p>
               <ul className="list-inline social-buttons">
@@ -251,11 +234,11 @@ class App extends React.Component {
             </div>
           </div>
          
-       
+        */}
         </div>
         <div className="row">
           <div className="col-lg-8 mx-auto text-center">
-            <p className="large text-muted">Pratik Dutta acknowledges Visvesvaraya PhD Scheme for Electronics and IT, an initiative of Ministry of Electronics and Information Technology (MeitY), Government of India for fellowship support. Dr. Sriparna Saha gratefully acknowledges the Young Faculty Research Fellowship (YFRF) Award, supported by Visvesvaraya PhD scheme for Electronics and IT, Ministry of Electronics and Information Technology (MeitY), Government of India, being implemented by Digital India Corporation (formerly Media Lab Asia) for carrying out this research.  </p>
+            <p className="large text-muted">Something about Made-With_Ml</p>
           </div>
         </div>
       </div>
@@ -265,18 +248,18 @@ class App extends React.Component {
       <div className="container">
         <div className="row align-items-center">
           <div className="col-md-4">
-            <span className="copyright">Copyright &copy; MULTI-PREDGO 2020</span>
+            <span className="copyright">Copyright &copy; TweetGuru</span>
           </div>
           <div className="col-md-4">
             <ul className="list-inline social-buttons">
             
               <li className="list-inline-item">
-                <a href="https://github.com/SwagarikaGiri/Multi-PredGO">
+                <a href="https://github.com/puevigreven/TwitterThoughtLeaders">
                 <i className="fa fa-github"></i>
                 </a>
               </li>
               <li className="list-inline-item">
-                <a href="https://github.com/SwagarikaGiri/Multi-PredGO-FrontEnd">
+                <a href="https://github.com/SwagarikaGiri/ThoughtGuru">
                   <i className="fa fa-github"></i>
                 </a>
               </li>
